@@ -14,12 +14,8 @@
 #include <stdio.h>
 using namespace std;
 
-int main() {
-    // Input data
-    string s = "";
-    cout << "Enter expression: ";
-    cin >> s;
-    
+list<char> ShuntingAlgorithm(string s)
+{
     /**
      * The shunting algorithm
      */
@@ -46,7 +42,6 @@ int main() {
                 {
                     if (precedence[stack.back()] > precedence[s[i]])
                     {
-                        cout << stack.back() << endl;
                         queue.push_back(stack.back());
                         stack.pop_back();
                     }
@@ -86,10 +81,11 @@ int main() {
         stack.pop_back();
     }
     
-    // output queue
-    copy(queue.begin(), queue.end(), ostream_iterator<char>(cout, " "));
-    cout << endl;
-    
+    return queue;
+}
+
+double ReversePolish(list<char> queue)
+{
     /**
      * Reverse polish
      */
@@ -102,15 +98,15 @@ int main() {
             fstack.push_back(*p - '0');
         else
         {
-            cout << "before: ";
-            copy(fstack.begin(), fstack.end(), ostream_iterator<double>(cout, " "));
-            cout << endl;
+//            cout << "before: ";
+//            copy(fstack.begin(), fstack.end(), ostream_iterator<double>(cout, " "));
+//            cout << endl;
             a = fstack.back();
             fstack.pop_back();
             b = fstack.back();
             fstack.pop_back();
-            cout << "a = " << a << endl;
-            cout << "b = " << b << endl;
+//            cout << "a = " << a << endl;
+//            cout << "b = " << b << endl;
             switch (*p)
             {
                 case '+':
@@ -129,15 +125,32 @@ int main() {
                     result = (double) pow((double) b, a);
                     break;
             }
-            cout << "result = " << result << endl;
+//            cout << "result = " << result << endl;
             fstack.push_back(result);
-            cout << "after: ";
-            copy(fstack.begin(), fstack.end(), ostream_iterator<double>(cout, " "));
-            cout << endl;
+//            cout << "after: ";
+//            copy(fstack.begin(), fstack.end(), ostream_iterator<double>(cout, " "));
+//            cout << endl;
         }
     }
-    copy(fstack.begin(), fstack.end(), ostream_iterator<double>(cout, " "));
+//    copy(fstack.begin(), fstack.end(), ostream_iterator<double>(cout, " "));
+//    cout << endl;
+    
+    return fstack.back();
+}
+
+int main() {
+    // Input data
+    string s = "";
+    cout << "Enter expression: ";
+    cin >> s;
+    
+    list<char>queue = ShuntingAlgorithm(s);
+    copy(queue.begin(), queue.end(), ostream_iterator<char>(cout, " "));
     cout << endl;
+    double answer = ReversePolish(queue);
+    cout << "Answer: " << answer << endl;
+    
 }
 
 // 4*8/(9-5)
+// 6^2-9*2/3
