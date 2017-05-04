@@ -14,16 +14,19 @@
 #include <stdio.h>
 using namespace std;
 
-list<string> ShuntingAlgorithm(string);
+list<string> ShuntingAlgorithm(string, double);
 double ReversePolish(list<string>);
+string ReplaceAll(string, const string&, const string&);
 
 int main() {
-    // Input data
+    // Input function
     string s = "";
     cout << "Enter function: ";
     cin >> s;
     
-    list<string>queue = ShuntingAlgorithm(s);
+    double x = 2;
+    list<string>queue = ShuntingAlgorithm(s, x);
+    
     copy(queue.begin(), queue.end(), ostream_iterator<string>(cout, " "));
     cout << endl;
     double answer = ReversePolish(queue);
@@ -31,7 +34,7 @@ int main() {
     
 }
 
-list<string> ShuntingAlgorithm(string s)
+list<string> ShuntingAlgorithm(string s, double x)
 {
     /**
      * The shunting algorithm
@@ -46,6 +49,9 @@ list<string> ShuntingAlgorithm(string s)
         {'*', 2}, {'/', 2},
         {'^', 3}
     };
+    
+    // replace 'x' by x-value
+    s = ReplaceAll(s, "x", to_string(x));
     
     for (int i = 0; i < s.length(); ++i)
     {
@@ -136,10 +142,11 @@ double ReversePolish(list<string> queue)
      */
     double a, b, result = 0;
     list<double>fstack;
+    string str;
     
     for (list<string>::iterator p = queue.begin(); p != queue.end(); ++p)
     {
-        string str = *p;
+        str = *p;
         if (isdigit(str[0]))
             fstack.push_back(stod(str));
         else
@@ -182,6 +189,15 @@ double ReversePolish(list<string> queue)
     //    cout << endl;
     
     return fstack.back();
+}
+
+string ReplaceAll(string str, const string& from, const string& to) {
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length();
+    }
+    return str;
 }
 
 // 4*8/(9-5)
