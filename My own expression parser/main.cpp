@@ -25,7 +25,7 @@ int main() {
     cout << "Enter function: ";
     cin >> func;
     
-    double x = -4;
+    double x = 1;
     double answer = f(func, x);
     cout << "Answer = " << answer << endl;
     
@@ -56,24 +56,45 @@ list<string> ShuntingAlgorithm(string s, double x)
         {'^', 3}
     };
     
+    // replace x^3 by x*x*x and so on
+    while (s.find("x^") != -1)
+    {
+        cout << "here" << endl;
+        int pos = s.find("x^");
+        int n = s[pos + 2] - '0';
+        s.erase(pos, 3);
+        string power = "";
+        
+        for (int i = 0; i < n; ++i)
+            power += "x*";
+        power.erase(power.end() - 1);
+        s.insert(pos, power);
+    }
+    
     // replace 'x' by x-value
     s = ReplaceAll(s, "x", to_string(x));
+    cout << "s: " << s << endl;
+    
+    // replace all '--' by '+'
+    s = ReplaceAll(s, "--", "+");
+    if (s[0] == '+')
+        s.erase(s.begin(), s.begin() + 1);
     
     // work with '-'
     bool numbers_before = false;
     int i = 0;
     while(i < s.length())
     {
-        cout << "i = " << i << endl;
         if (isdigit(s[i]))
             numbers_before = true;
         i++;
-        if (s[i] == '-' && numbers_before)
+        if (s[i] == '-' && numbers_before && isdigit(s[i - 1]))
         {
             s.insert(i, "+");
             i++;
         }
     }
+    cout << "s: " << s << endl;
     
     for (int i = 0; i < s.length(); ++i)
     {
