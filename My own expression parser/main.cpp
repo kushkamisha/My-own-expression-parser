@@ -17,21 +17,27 @@ using namespace std;
 list<string> ShuntingAlgorithm(string, double);
 double ReversePolish(list<string>);
 string ReplaceAll(string, const string&, const string&);
+double f(string, double);
 
 int main() {
     // Input function
-    string s = "";
+    string func = "";
     cout << "Enter function: ";
-    cin >> s;
+    cin >> func;
     
-    double x = 2;
+    double x = -4;
+    double answer = f(func, x);
+    cout << "Answer = " << answer << endl;
+    
+}
+
+double f(string s, double x)
+{
     list<string>queue = ShuntingAlgorithm(s, x);
     
     copy(queue.begin(), queue.end(), ostream_iterator<string>(cout, " "));
     cout << endl;
-    double answer = ReversePolish(queue);
-    cout << "Answer: " << answer << endl;
-    
+    return ReversePolish(queue);
 }
 
 list<string> ShuntingAlgorithm(string s, double x)
@@ -53,17 +59,33 @@ list<string> ShuntingAlgorithm(string s, double x)
     // replace 'x' by x-value
     s = ReplaceAll(s, "x", to_string(x));
     
+    // work with '-'
+    bool numbers_before = false;
+    int i = 0;
+    while(i < s.length())
+    {
+        cout << "i = " << i << endl;
+        if (isdigit(s[i]))
+            numbers_before = true;
+        i++;
+        if (s[i] == '-' && numbers_before)
+        {
+            s.insert(i, "+");
+            i++;
+        }
+    }
+    
     for (int i = 0; i < s.length(); ++i)
     {
-        if (isdigit(s[i]) || s[i] == '.')
+        if (isdigit(s[i]) || s[i] == '.' || s[i] == '-')
         {
             // It's a number
             if (prev.length() == 1)
             {
-                if (isdigit(prev[0]) || prev[0] == '.')
+                if (isdigit(prev[0]) || prev[0] == '.' || prev[0] == '-')
                 {
                     number = prev + string(1, s[i]);
-                    cout << "Number: " << number << endl;
+//                    cout << "Number: " << number << endl;
                     queue.pop_back();
                     queue.push_back(number);
                     prev = number;
@@ -77,7 +99,7 @@ list<string> ShuntingAlgorithm(string s, double x)
             else
             {
                 number = prev + string(1, s[i]);
-                cout << "Number: " << number << endl;
+//                cout << "Number: " << number << endl;
                 queue.pop_back();
                 queue.push_back(number);
                 prev = number;
@@ -147,6 +169,11 @@ double ReversePolish(list<string> queue)
     for (list<string>::iterator p = queue.begin(); p != queue.end(); ++p)
     {
         str = *p;
+        if (str[0] == '-')
+        {
+            fstack.push_back(stod(str));
+            continue;
+        }
         if (isdigit(str[0]))
             fstack.push_back(stod(str));
         else
